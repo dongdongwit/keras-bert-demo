@@ -3,12 +3,12 @@
 .ipynb_checkpoints
 
 /data/*.pkl
-/pre_model/
-/trained_model/
+/pre_model/chinese_L-12_H-768_A-12/
+/trained_model/*.h5
 /__pycache__/
 
 ### excel###
 *.xlsx
 *.xls
 
-
+*.txt

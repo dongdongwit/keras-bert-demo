@@ -38,7 +38,7 @@ if __name__ == "__main__":
     filepath = 'trained_model/my_model.h5'
     ModelCheckpoint = keras.callbacks.ModelCheckpoint(filepath, monitor='val_loss', save_best_only=True, verbose=1)
     early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, verbose=0, mode='auto')
-    tbCallBack = keras.callbacks.TensorBoard(log_dir='logs/label2',  # log 目录
+    tbCallBack = keras.callbacks.TensorBoard(log_dir='logs/label1',  # log 目录
                              histogram_freq=0,  # 按照何等频率（epoch）来计算直方图，0为不计算
                              # batch_size=32,     # 用多大量的数据计算直方图
                              write_graph=True,  # 是否存储网络结构图
@@ -47,15 +47,15 @@ if __name__ == "__main__":
                              embeddings_freq=0,
                              embeddings_layer_names=None,
                              embeddings_metadata=None)
-    single_model = my_model(config_path, checkpoint_path, class_num, trainable=False).get_single_model()
-    single_model.fit_generator(train_gen.__iter__(mod="single"), steps_per_epoch=len(train_gen),
-                        callbacks=[history, ModelCheckpoint, tbCallBack], class_weight=single_class_weight,
-                        verbose=1, epochs=100, validation_data=valid_gen.__iter__(mod="single"),
-                        validation_steps=len(valid_gen))
+    # single_model = my_model(config_path, checkpoint_path, class_num, trainable=True).get_single_model()
+    # single_model.fit_generator(train_gen.__iter__(mod="single"), steps_per_epoch=len(train_gen),
+    #                     callbacks=[history, ModelCheckpoint, tbCallBack], class_weight=single_class_weight,
+    #                     verbose=1, epochs=100, validation_data=valid_gen.__iter__(mod="single"),
+    #                     validation_steps=len(valid_gen))
 
-    # multi_model = my_model(config_path, checkpoint_path, class_num, trainable=False).get_multi_model()
-    # multi_model.fit_generator(train_gen.__iter__(mod="multi"), steps_per_epoch=len(train_gen),
-    #                           callbacks=[history, ModelCheckpoint, tbCallBack], class_weight=multi_class_weight,
-    #                           verbose=1, epochs=100, validation_data=valid_gen.__iter__(mod="multi"),
-    #                           validation_steps=len(valid_gen))
+    multi_model = my_model(config_path, checkpoint_path, class_num, trainable=True).get_multi_model()
+    multi_model.fit_generator(train_gen.__iter__(mod="multi"), steps_per_epoch=len(train_gen),
+                              callbacks=[history, ModelCheckpoint, tbCallBack], class_weight=multi_class_weight,
+                              verbose=1, epochs=100, validation_data=valid_gen.__iter__(mod="multi"),
+                              validation_steps=len(valid_gen))
 
