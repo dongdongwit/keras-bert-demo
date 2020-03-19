@@ -2,11 +2,14 @@
 .idea
 .ipynb_checkpoints
 
-data/
-logs/
-pre_model/
-trained_model/
+/data/
+/logs/
+/pre_model/
+/trained_model/
+/__pycache__/
 
 ### excel###
 *.xlsx
 *.xls
+
+
