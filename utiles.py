@@ -31,7 +31,7 @@ class OurTokenizer(keras_bert.Tokenizer):
         return R
 
 
-def parser_excel(excel_path, class_num, label1_id, label2_id):
+def parser_excel(excel_path, class_num, label1_id, label2_id, format_id, main_info=False):
     train_excel = pd.read_excel(excel_path, header=None, skiprows=[0])
     label1 = []
     for row in train_excel[1]:
@@ -39,10 +39,16 @@ def parser_excel(excel_path, class_num, label1_id, label2_id):
     label2 = []
     for row in train_excel[2]:
         label2.append(label2_id[row])
+    format_list = []
+    for row in train_excel[3]:
+        format_list.append(format_id[row])
     data = []
     for index in range(len(train_excel[4])):
-        data.append((train_excel[4][index], np.eye(class_num[0])[label1[index]],
-                     np.eye(class_num[1])[label2[index]]))
+
+        data.append((train_excel[4][index].split("\\n")[0] if main_info else train_excel[4][index],
+                     np.eye(class_num[0])[label1[index]],
+                     np.eye(class_num[1])[label2[index]],
+                     np.eye(class_num[2])[format_list[index]]))
     return data
 
 

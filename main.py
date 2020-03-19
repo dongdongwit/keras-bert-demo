@@ -16,14 +16,16 @@ with open("data/label1_id.pkl", 'rb') as f:
     label1_id = pickle.load(f)
 with open("data/label2_id.pkl", 'rb') as f:
     label2_id = pickle.load(f)
-class_num = [len(label1_id), len(label2_id)]
+format_id = {"Liquid": 0, "Powder": 1, "Bar": 2, "Capsule": 3}
+class_num = [len(label1_id), len(label2_id), len(format_id)]
 
-train_data = parser_excel("data/data_clean_label1_train.xlsx", class_num, label1_id, label2_id)
-valid_data = parser_excel("data/data_clean_label1_valid.xlsx", class_num, label1_id, label2_id)
+train_data = parser_excel("data/data_clean_label1_train.xlsx", class_num, label1_id, label2_id, format_id, True)
+valid_data = parser_excel("data/data_clean_label1_valid.xlsx", class_num, label1_id, label2_id, format_id, True)
 label1_list = [np.argmax(d[1]) for d in train_data]
 label2_list = [np.argmax(d[2]) for d in train_data]
+format_list = [np.argmax(d[3]) for d in train_data]
 multi_class_weight = [get_class_weight(label1_list, class_num[0]), get_class_weight(label2_list, class_num[1])]
-single_class_weight = get_class_weight(label2_list, class_num[1])
+single_class_weight = get_class_weight(format_list, class_num[2])
 
 token_dict = {}
 with codecs.open(dict_path, 'r', 'utf8') as reader:
@@ -38,7 +40,7 @@ if __name__ == "__main__":
     filepath = 'trained_model/my_model.h5'
     ModelCheckpoint = keras.callbacks.ModelCheckpoint(filepath, monitor='val_loss', save_best_only=True, verbose=1)
     early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, verbose=0, mode='auto')
-    tbCallBack = keras.callbacks.TensorBoard(log_dir='logs/label1',  # log 目录
+    tbCallBack = keras.callbacks.TensorBoard(log_dir='logs',  # log 目录
                              histogram_freq=0,  # 按照何等频率（epoch）来计算直方图，0为不计算
                              # batch_size=32,     # 用多大量的数据计算直方图
                              write_graph=True,  # 是否存储网络结构图
@@ -47,15 +49,15 @@ if __name__ == "__main__":
                              embeddings_freq=0,
                              embeddings_layer_names=None,
                              embeddings_metadata=None)
-    # single_model = my_model(config_path, checkpoint_path, class_num, trainable=True).get_single_model()
-    # single_model.fit_generator(train_gen.__iter__(mod="single"), steps_per_epoch=len(train_gen),
-    #                     callbacks=[history, ModelCheckpoint, tbCallBack], class_weight=single_class_weight,
-    #                     verbose=1, epochs=100, validation_data=valid_gen.__iter__(mod="single"),
-    #                     validation_steps=len(valid_gen))
+    single_model = my_model(config_path, checkpoint_path, class_num, trainable=False).get_single_model()
+    single_model.fit_generator(train_gen.__iter__(mod="single"), steps_per_epoch=len(train_gen),
+                        callbacks=[history, ModelCheckpoint, tbCallBack], class_weight=single_class_weight,
+                        verbose=1, epochs=100, validation_data=valid_gen.__iter__(mod="single"),
+                        validation_steps=len(valid_gen))
 
-    multi_model = my_model(config_path, checkpoint_path, class_num, trainable=True).get_multi_model()
-    multi_model.fit_generator(train_gen.__iter__(mod="multi"), steps_per_epoch=len(train_gen),
-                              callbacks=[history, ModelCheckpoint, tbCallBack], class_weight=multi_class_weight,
-                              verbose=1, epochs=100, validation_data=valid_gen.__iter__(mod="multi"),
-                              validation_steps=len(valid_gen))
+    # multi_model = my_model(config_path, checkpoint_path, class_num, trainable=True).get_multi_model()
+    # multi_model.fit_generator(train_gen.__iter__(mod="multi"), steps_per_epoch=len(train_gen),
+    #                           callbacks=[history, ModelCheckpoint, tbCallBack], class_weight=multi_class_weight,
+    #                           verbose=1, epochs=100, validation_data=valid_gen.__iter__(mod="multi"),
+    #                           validation_steps=len(valid_gen))
 
