@@ -1,0 +1,12 @@
+###pycharm###
+.idea
+.ipynb_checkpoints
+
+data/
+logs/
+pre_model/
+trained_model/
+
+### excel###
+*.xlsx
+*.xls
