@@ -2,8 +2,7 @@
 .idea
 .ipynb_checkpoints
 
-/data/
-/logs/
+/data/*.pkl
 /pre_model/
 /trained_model/
 /__pycache__/
