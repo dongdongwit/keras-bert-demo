@@ -3,6 +3,7 @@ from keras.layers import *
 from keras.models import Model
 from keras_bert import load_trained_model_from_checkpoint, calc_train_steps, AdamWarmup
 from keras.optimizers import Adam
+from keras import regularizers
 
 
 class my_model:
@@ -25,8 +26,8 @@ class my_model:
         x = bert_model([x1_in, x2_in])
         x = Lambda(lambda x: x[:, 0])(x)
         if not self.trainable:
-            x = Dense(128, activation='relu', name="fc1")(x)
-            x = Dropout(0.2)(x)
+            x = Dense(128, activation='relu', name="fc1", kernel_regularizer=regularizers.l2(0.01))(x)
+            x = Dropout(0.3)(x)
         predict1 = Dense(self.class_num[0], activation='softmax', name="label1")(x)
         predict2 = Dense(self.class_num[1], activation='softmax', name="label2")(x)
 
@@ -58,8 +59,8 @@ class my_model:
         x = bert_model([x1_in, x2_in])
         x = Lambda(lambda x: x[:, 0])(x)
         if not self.trainable:
-            x = Dense(128, activation='relu', name="fc1")(x)
-            x = Dropout(0.2)(x)
+            x = Dense(128, activation='relu', name="fc1", kernel_regularizer=regularizers.l2(0.01))(x)
+            x = Dropout(0.3)(x)
         predict = Dense(self.class_num[1], activation='softmax', name="label")(x)
 
         model = Model([x1_in, x2_in], predict, name="single_model")

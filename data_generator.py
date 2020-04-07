@@ -56,7 +56,7 @@ class data_generator:
                     we.append(word_emb)
                     pe.append(position_emb)
                     # attention! process different label
-                    label.append(d[3])
+                    label.append(d[2])
                     if len(we) == self.batch_size or i == idxs[-1]:
                         we = seq_padding(we)
                         pe = seq_padding(pe)
